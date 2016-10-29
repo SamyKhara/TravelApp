@@ -10,10 +10,32 @@
     tools:context="com.example.samy.travelapp.MainActivity">
 
     <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="320dp"
+        android:layout_height="380dp"
         android:name="com.google.android.gms.maps.MapFragment"
         android:id="@+id/mapfragment"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_input1"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="Enter Location"
+        android:textColorHint="@color/accent_material_light"
+        android:width="200dp"
+        android:textAlignment="center" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go"
+        android:id="@+id/button_go"
+        android:layout_below="@+id/main_input1"
+        android:onClick="geoLocate"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
