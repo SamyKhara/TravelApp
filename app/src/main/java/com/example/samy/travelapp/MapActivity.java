@@ -164,8 +164,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         System.out.println("## myLocation longitude: "+ longitude);
 
         //If you are testing this on your phone in singapore, use the following present location:
-//        latitude= 28.57713316;
-//        longitude= 77.04353435;
+//        double latitude= 28.57713316;
+//        double longitude= 77.04353435;
 
         //Working on setting marker points
         String location;
