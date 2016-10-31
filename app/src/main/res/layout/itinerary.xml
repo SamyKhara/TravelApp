@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:id="@+id/relativeLayout"
+        android:layout_marginEnd="24dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentEnd="true">
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/totalCost"
+        android:typeface="monospace"
+        android:textSize="20dp"
+        android:layout_alignBottom="@+id/relativeLayout"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="8dp" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/travelList"
+        android:typeface="monospace"
+        android:choiceMode="none"
+        android:background="#2effbfb3"
+        android:layout_marginTop="7dp"
+        android:layout_below="@+id/totalTime"
+        android:layout_alignStart="@+id/relativeLayout"
+        android:layout_alignEnd="@+id/relativeLayout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:typeface="monospace"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/totalTime"
+        android:textSize="20dp"
+        android:layout_below="@+id/totalCost"
+        android:layout_alignEnd="@+id/textView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Travel Itinerary"
+        android:id="@+id/textView"
+        android:textSize="25dp"
+        android:layout_marginTop="33dp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
