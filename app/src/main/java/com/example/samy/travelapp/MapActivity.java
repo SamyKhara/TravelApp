@@ -2,6 +2,7 @@ package com.example.samy.travelapp;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Geocoder;
@@ -14,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -41,13 +43,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
     Marker marker;
     Polyline line;
+    Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //No Google Maps Layout
             System.out.println("**Error in Displaying Google Maps**");
         }
+
+//        back = (Button)findViewById(R.id.backBtn);
+//        back.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MapActivity.this, TravelItinerary.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     private void initMap() {
@@ -152,8 +164,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         System.out.println("## myLocation longitude: "+ longitude);
 
         //If you are testing this on your phone in singapore, use the following present location:
-        //latitude= 28.57713316;
-        //longitude= 77.04353435;
+//        latitude= 28.57713316;
+//        longitude= 77.04353435;
 
         //Working on setting marker points
         String location;
