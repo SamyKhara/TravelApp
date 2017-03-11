@@ -43,12 +43,17 @@ public class HomepageActivity extends Fragment implements View.OnClickListener{
 
         if (ActivityCompat.checkSelfPermission(HomepageActivity.this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HomepageActivity.this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(HomepageActivity.this.getActivity(), new String[]{
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
         if (ActivityCompat.checkSelfPermission(HomepageActivity.this.getContext(), Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(HomepageActivity.this.getActivity(), new String[]{
-                    android.Manifest.permission.CAMERA}, 2);
+                    Manifest.permission.CAMERA},2);
+        }
+        if (ActivityCompat.checkSelfPermission(HomepageActivity.this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(HomepageActivity.this.getActivity(), new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE},3);
         }
         return root;
     }

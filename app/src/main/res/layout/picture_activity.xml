@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <Button
+        android:text="Take Picture"
+        android:layout_width="match_parent"
+        android:background="@color/text1"
+        android:layout_height="wrap_content"
+        android:id="@+id/camerabtn" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="393dp"
+        android:layout_weight="0.38">
+
+        <ImageView
+            android:id="@+id/imgView"
+            android:layout_width="match_parent"
+            android:layout_height="331dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/msgtext"
+            android:autoText="false"
+            android:hint="Write a message"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <Button
+        android:text="Share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text1"
+        android:id="@+id/sharebtn" />
+
+</LinearLayout>
