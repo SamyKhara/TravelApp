@@ -1,314 +1,215 @@
 package com.example.samy.travelapp;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.identity.intents.Address;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.example.samy.travelapp.database.Data;
+import com.example.samy.travelapp.database.SolutionSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE;
 
-    GoogleMap mGoogleMap;
-    GoogleApiClient mGoogleApiClient;
-    Marker marker;
-    Polyline line;
-    Button back;
+public class MapActivity extends Fragment implements OnMapReadyCallback, View.OnClickListener {
 
+    int n = 0; //if n = 0, map type is MAP_TYPE_NORMAL, else MAP_TYPE_SATELLITE
+    PolylineOptions routeLine = new PolylineOptions().geodesic(true);
+    Geocoder myGeocoder;
+    MarkerOptions marker;
+    String locationName;
+    String searchText;
+    EditText searchEditText;
+    Button search_button;
+    Button change_view_button;
+    Button itinerary;
+    GoogleMap mMap;
+    View root;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (googleServicesAvailable()) {
-            Toast.makeText(this, "Welcome", Toast.LENGTH_LONG).show();
-            setContentView(R.layout.activity_main);
-            initMap();
-        } else {
-            //No Google Maps Layout
-            System.out.println("**Error in Displaying Google Maps**");
-        }
-
-//        back = (Button)findViewById(R.id.backBtn);
-//        back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MapActivity.this, TravelItinerary.class);
-//                startActivity(intent);
-//            }
-//        });
-    }
-
-    private void initMap() {
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapfragment);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        root = inflater.inflate(R.layout.map_activity, container, false);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
-    public boolean googleServicesAvailable() {
-        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-        int isAvailable = api.isGooglePlayServicesAvailable(this);
-        if (isAvailable == ConnectionResult.SUCCESS) {
-            return true;
-        } else if (api.isUserResolvableError(isAvailable)) {
-            Dialog dialog = api.getErrorDialog(this, isAvailable, 0);
-            dialog.show();
-        } else {
-            Toast.makeText(this, "Connect to play services", Toast.LENGTH_LONG).show();
+        myGeocoder = new Geocoder(getActivity(), Locale.getDefault());
+
+
+        search_button = (Button) root.findViewById(R.id.search_button);
+        search_button.setOnClickListener(this);
+
+        change_view_button = (Button) root.findViewById(R.id.change_view_button);
+        change_view_button.setOnClickListener(this);
+
+        itinerary = (Button) root.findViewById(R.id.itinerary);
+        itinerary.setOnClickListener(this);
+
+        if (MainActivity.attractList.isEmpty()) {
+            MainActivity.attractList.add("nothing");
+            MainActivity.attractList.add("Marina Bay Sands");
         }
-        return false;
+
+
+        return root;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("ON MAP READY!");
+        mMap = googleMap;
 
-        System.out.println("\n\n**** In onMapReady function ****");
-        mGoogleMap = googleMap;
 
-        //goToLocationZoom(28.576990, 77.043202, 13);
+        if (ActivityCompat.checkSelfPermission(MapActivity.this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this.getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("#### In checkSelfPermission");
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
         }
-        System.out.println("\n\n**** Before setMyLocationEnabled function ****");
-        mGoogleMap.setMyLocationEnabled(true);
-        //This over hear gives us that 'MyLocation' Button in the Maps which is used to get to my present location!
-        System.out.println("\n\n**** After setMyLocationEnabled function ****");
-    }
-        /*
-       //This code gets us to our present location the moment map starts!
-       mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+        mMap.setMyLocationEnabled(true);
 
-        //Object created but never connected to the Google Api Client
-        mGoogleApiClient.connect();*/
 
-    private void goToLocationZoom(double lat, double lng, float zoom) {
-        LatLng ll = new LatLng(lat, lng);
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        mGoogleMap.moveCamera(update);
+        System.out.println("ON MAP READY!");
+        mMap.setPadding(0,200,0,0);
+        //Set default current location to MBS
+        List<Address> matchedList = null;
+        try {
+            matchedList = myGeocoder.getFromLocationName("Marina Bay Sands", 1);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("ON MAP READY!");
+        double lat = matchedList.get(0).getLatitude();
+        double lon = matchedList.get(0).getLongitude();
+        LatLng currentLocation = new LatLng(lat, lon);
+        System.out.println("POLYLINE");
+        if (SolutionSet.route != null)
+            showPolyline();
+        mMap.addMarker(new MarkerOptions().position(currentLocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,(float) 13.6));
     }
 
 
 
-    public void geoLocate(View view) throws IOException {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.search_button:
+                searchEditText = (EditText) getView().findViewById(R.id.search_box);
+                searchText = searchEditText.getText().toString();
+                if (searchText != null && !searchText.isEmpty() && !searchText.trim().isEmpty()) {
+                    locationName = correctedSearch(searchText);
+                    List<Address> matchedList = null;
+                    try {
+                        String locationName1 = locationName + " Singapore";
+                        matchedList = myGeocoder.getFromLocationName(locationName1, 1);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    double lat = matchedList.get(0).getLatitude();
+                    double lon = matchedList.get(0).getLongitude();
+                    LatLng locationDetails = new LatLng(lat, lon);
+                    marker = new MarkerOptions().position(locationDetails).title(locationName);
+                    mMap.addMarker(marker);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationDetails, 13));
+                }
+                break;
 
-        ArrayList<String> arr = new ArrayList<>();
-        arr.add("Dwarka Sector 21");
-        arr.add("Dwarka Sector 10");
-        arr.add("Dwarka Sector 12");
+            case R.id.change_view_button:
+                if (n == 0)
+                    mMap.setMapType(MAP_TYPE_SATELLITE);
+                else
+                    mMap.setMapType(MAP_TYPE_NORMAL);
+                n = 1 - n;
+                break;
 
-        //Finding my  present location and getting there!
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            case R.id.itinerary:
+
+                TravelItinerary nextFrag = new TravelItinerary();
+                this.getFragmentManager().beginTransaction()
+                        .replace(this.getId(), nextFrag, null)
+                        .addToBackStack(null)
+                        .commit();
         }
-        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
 
-        double latitude = myLocation.getLatitude();
-        double longitude = myLocation.getLongitude();
-        System.out.println("## myLocation latitude: "+ latitude);
-        System.out.println("## myLocation longitude: "+ longitude);
+    public void showPolyline() {
+        System.out.println("POLYLINE!!");
+        for (int i = 0; i < SolutionSet.route.length; i++) {
 
-        //If you are testing this on your phone in singapore, use the following present location:
-//        double latitude= 28.57713316;
-//        double longitude= 77.04353435;
-
-        //Working on setting marker points
-        String location;
-        int i;
-
-        for (i=0;i<3;i++)
-        {
-            if (i==0){
-                //Home means Present Location of the person!
-                setMarker("Home", latitude, longitude, -1);
+            List<Address> place = null;
+            try {
+                String correctedNameInSingapore = SolutionSet.route[i] + " Singapore";
+                place = myGeocoder.getFromLocationName(correctedNameInSingapore, 1);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
-
-            location= arr.get(i);
-            System.out.println("$$$$ Location "+i+" : "+location);
-
-            Geocoder gc = new Geocoder(this);
-
-            List<android.location.Address> list = gc.getFromLocationName(location, 1);
-
-            android.location.Address address = list.get(0);
-
-            String locality = address.getLocality();
-
-            double lat = address.getLatitude();
-            double lng = address.getLongitude();
-
-            setMarker(location, lat, lng, i);
+            double latPlace = place.get(0).getLatitude();
+            double lonPlace = place.get(0).getLongitude();
+            LatLng placeDetails = new LatLng(latPlace, lonPlace);
+            MarkerOptions anotherMarker = new MarkerOptions().position(placeDetails);
+            mMap.addMarker(anotherMarker);
+            routeLine.add(placeDetails);
         }
-        System.out.println("******Loop has finished!");
-
-        //Takes me straight to my present location since line starts from there!
-        goToLocationZoom(latitude,longitude,13);
+        if (MainActivity.attractList.size() > 1 && MainActivity.attractList != null)
+            mMap.addPolyline(routeLine);
     }
 
 
-    Marker marker1;
-    Marker marker2;
-    Marker marker3;
-    Marker marker4;
 
-    //This method is only for Setting marker and then drawing the line. Is hardcoded as of now!
-    private void setMarker(String location, double lat, double lng, int i) {
-
-        i=i+1;
-        //        if (marker!=null){
-//            removePrevinstances();
-//        }
-
-        System.out.println("\n\nI am in setMarker function");
-        MarkerOptions options= new MarkerOptions()
-                            .title(location)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .position(new LatLng(lat,lng))
-                            .snippet("Point #: "+i);
-
-        if(marker1==null){
-            marker1= mGoogleMap.addMarker(options);
-        }else if (marker2==null){
-            marker2= mGoogleMap.addMarker(options);
-        }else if (marker3==null){
-            marker3= mGoogleMap.addMarker(options);
-        }else  if (marker4==null){
-            marker4= mGoogleMap.addMarker(options);
-            drawLine();
-        }else{
-            System.out.println("!!!!!!! IT HAS COME INTO ELSE !!!!!!");
-        }
-
-    }
-
-
-    private void drawLine(){
-        PolylineOptions options = new PolylineOptions();
-
-
-            options.add(marker1.getPosition())
-                    .add(marker2.getPosition())
-                    .add(marker3.getPosition())
-                    .add(marker4.getPosition())
-                    .color(Color.RED)
-                    .width(4);
-
-        line=mGoogleMap.addPolyline(options);
-    }
-
-//Code to remove markers
-//    private void removePrevinstances(){
-//        marker.remove();
-//        marker= null;
-//    }
-
-
-    LocationRequest mLocationRequest;
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        //Sets in how much time the user's location is refreshed
-        mLocationRequest.setInterval(1000);
-
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
+    public static int minDistance(String a, String b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+        // i == 0
+        int [] costs = new int [b.length() + 1];
+        for (int j = 0; j < costs.length; j++)
+            costs[j] = j;
+        for (int i = 1; i <= a.length(); i++) {
+            // j == 0; nw = lev(i - 1, j)
+            costs[0] = i;
+            int nw = i - 1;
+            for (int j = 1; j <= b.length(); j++) {
+                int cj = Math.min(1 + Math.min(costs[j], costs[j - 1]), a.charAt(i - 1) == b.charAt(j - 1) ? nw : nw + 1);
+                nw = costs[j];
+                costs[j] = cj;
             }
-
-        if(mGoogleApiClient!= null){
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
-        else{
-            System.out.println("####### ERROR in onConnected");
-        }
+        return costs[b.length()];
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        System.out.println("****## In onConnectionSuspended method!##****");
-    }
+    // Robust search, returns corrected name location
+    public static String correctedSearch(String search){
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        System.out.println("****## In onConnectionFailed method!##****");
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        System.out.println("****## In onLocationChanged method!##****");
-
-        if (location==null){
-            Toast.makeText(this, "Cant get current location", Toast.LENGTH_LONG).show();
+        ArrayList<Integer> myList = new ArrayList<>();
+        Hashtable balance = new Hashtable();
+        for (int i=1; i < Data.attractionNames.length; i++){
+            int value = minDistance(search, Data.attractionNames[i]);
+            balance.put(value, Data.attractionNames[i]);
+            myList.add(value);
         }
-        else{
-            LatLng ll= new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate update= CameraUpdateFactory.newLatLngZoom(ll, 15);
-            mGoogleMap.animateCamera(update);
-        }
+        Collections.sort(myList);
+        return (String) balance.get(myList.get(0));
     }
-
 }

@@ -10,29 +10,27 @@ import java.util.ArrayList;
 
 
 public class CustomListAdapter extends BaseAdapter{
-
-
-    private ArrayList<DailyListItems> listData;
+    private ArrayList<ListItems> listData;
     private LayoutInflater layoutInflater;
 
-    public CustomListAdapter(Context aContext, ArrayList<DailyListItems> listData) {
+    public CustomListAdapter(Context aContext, ArrayList<ListItems> listData) {
         this.listData = listData;
         layoutInflater = LayoutInflater.from(aContext);
     }
 
     @Override
     public int getCount() {
-    return listData.size();
+        return listData.size();
     }
 
     @Override
     public Object getItem(int position) {
-    return listData.get(position);
+        return listData.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-    return position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -42,7 +40,6 @@ public class CustomListAdapter extends BaseAdapter{
             holder = new ViewHolder();
             holder.place = (TextView) convertView.findViewById(R.id.placeText);
             holder.method = (TextView) convertView.findViewById(R.id.methodText);
-            holder.cost = (TextView) convertView.findViewById(R.id.costText);
 
             convertView.setTag(holder);
         } else {
@@ -51,14 +48,13 @@ public class CustomListAdapter extends BaseAdapter{
 
         holder.place.setText(listData.get(position).getPlace());
         holder.method.setText(listData.get(position).getMethod());
-        holder.cost.setText(listData.get(position).getCost().toString());
 
         return convertView;
     }
 
     static class ViewHolder {
-    TextView place;
-    TextView method;
-    TextView cost;
+        TextView place;
+        TextView method;
+
     }
 }

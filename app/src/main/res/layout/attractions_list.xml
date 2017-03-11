@@ -1,88 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <TextView
-        android:text="Your List!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/listOfPlaces"
-        android:layout_centerHorizontal="true"
-        android:textSize="16sp"
-        android:fontFamily="monospace" />
-
-    <EditText
-        android:layout_width="80sp"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/budget"
-        android:textSize="18sp"
-        android:layout_alignBaseline="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_toEndOf="@+id/textView3"
-        android:layout_marginStart="20dp" />
-
-    <TextView
-        android:text="Rs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5"
-        android:textSize="18sp"
-        android:fontFamily="monospace"
-        android:layout_alignBaseline="@+id/budget"
-        android:layout_alignBottom="@+id/budget"
-        android:layout_alignEnd="@+id/textView3" />
-
-    <TextView
-        android:text="Budget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:id="@+id/textView"
-        android:textSize="18sp"
-        android:fontFamily="monospace"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/textView3" />
-
-    <TextView
-        android:text="Choose the places you want to visit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:textSize="16sp"
-        android:fontFamily="monospace"
-        android:layout_below="@+id/budget"
-        android:layout_centerHorizontal="true" />
-
-    <ListView
-        android:layout_width="250dp"
-        android:id="@+id/listOfPlaces"
-        android:fadeScrollbars="false"
-        android:typeface="monospace"
-        android:layout_height="150dp"
-        android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true" />
-
-    <ListView
-        android:layout_width="250dp"
-        android:layout_height="150dp"
-        android:id="@+id/attractionListView"
-        android:typeface="monospace"
-        android:fadeScrollbars="false"
-        android:layout_below="@+id/textView3"
-        android:layout_alignStart="@+id/listOfPlaces" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    >
 
     <Button
-        android:text="Generate Itinerary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:id="@+id/itinerarybtn"
-        android:fontFamily="monospace"
+        android:text="@string/add"
+        android:id="@+id/add"
+        android:background="@color/text1"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="23dp"
+        android:autoText="false"
+        style="@style/Widget.AppCompat.Button.Small"
+        android:minHeight="28dp"
+        android:layout_below="@+id/attraction"
+        android:layout_alignParentStart="true"
+        android:textSize="16sp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/attraction"
+        android:hint="@string/enter_attraction"
+        android:layout_marginTop="40dp"
+        android:textSize="18sp"
+        android:typeface="monospace"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/add"
+        android:layout_alignEnd="@+id/generateIt" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/delbg"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageView"
+        android:adjustViewBounds="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/generate_itinerary"
+        android:id="@+id/generateIt"
+        android:background="@color/text1"
+        android:minHeight="28dp"
+        android:layout_marginEnd="22dp"
+        android:textSize="16dp"
+        android:layout_above="@+id/attractionList"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/attractionList"
+        android:textColor="@color/text2"
+        android:choiceMode="singleChoice"
+        android:layout_above="@+id/clearbtn"
+        android:layout_marginBottom="32dp"
+        android:layout_below="@+id/add"
+        android:layout_alignStart="@+id/add"
+        android:layout_alignEnd="@+id/generateIt" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear All"
+        android:id="@+id/clearbtn"
+        android:background="@color/text1"
+        android:minHeight="23dp"
+        android:textSize="16dp"
+        android:layout_above="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="13dp" />
+
+
 </RelativeLayout>

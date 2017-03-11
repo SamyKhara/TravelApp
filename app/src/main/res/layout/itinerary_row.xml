@@ -10,7 +10,8 @@
         android:id="@+id/placeText"
         android:typeface="monospace"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,22 +20,10 @@
         android:text="Medium Text"
         android:id="@+id/methodText"
         android:typeface="monospace"
-        android:textSize="20dp"
         android:textStyle="bold"
+        android:layout_marginEnd="23dp"
         android:layout_below="@+id/placeText"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="88dp" />
-
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="42dp"
-        android:id="@+id/costText"
-        android:textSize="20sp"
-        android:fontFamily="monospace"
-        android:layout_width="60sp"
-        android:layout_marginBottom="9dp"
-        android:layout_alignBottom="@+id/methodText"
         android:layout_alignParentEnd="true"
-        android:text="cost text" />
+        android:textSize="18dp" />
 
 </RelativeLayout>
